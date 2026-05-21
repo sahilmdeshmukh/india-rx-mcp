@@ -10,3 +10,4 @@ htmlcov/
 .DS_Store
 *.db
 tests/fixtures/cache/
+uv.lock
