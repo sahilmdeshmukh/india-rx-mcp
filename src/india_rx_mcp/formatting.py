@@ -11,6 +11,12 @@ def _fmt_price(p: float | None) -> str:
     return f"₹{p:.2f}" if p is not None else ""
 
 
+def _cell(s: str | None) -> str:
+    if not s:
+        return ""
+    return s.replace("|", "\\|").replace("\n", " ")
+
+
 def approvals_table(approvals: list[Approval]) -> str:
     if not approvals:
         return "_No approvals found for the given criteria._"
@@ -20,8 +26,8 @@ def approvals_table(approvals: list[Approval]) -> str:
     ]
     for a in approvals:
         lines.append(
-            f"| {a.drug_name} | {a.sponsor or ''} | "
-            f"{_fmt_date(a.approval_date)} | {a.indication or ''} |"
+            f"| {_cell(a.drug_name)} | {_cell(a.sponsor)} | "
+            f"{_fmt_date(a.approval_date)} | {_cell(a.indication)} |"
         )
     lines.append("")
     lines.append(citations_block([a.source_url for a in approvals]))
@@ -33,11 +39,11 @@ def approval_detail(a: Approval) -> str:
         f"# {a.drug_name}",
         "",
         f"- **Approval ID:** `{a.approval_id}`",
-        f"- **Sponsor:** {a.sponsor or ''}",
+        f"- **Sponsor:** {_cell(a.sponsor)}",
         f"- **Approval date:** {_fmt_date(a.approval_date)}",
-        f"- **Indication:** {a.indication or ''}",
-        f"- **Formulation:** {a.formulation or ''}",
-        f"- **Conditions of approval:** {a.conditions or ''}",
+        f"- **Indication:** {_cell(a.indication)}",
+        f"- **Formulation:** {_cell(a.formulation)}",
+        f"- **Conditions of approval:** {_cell(a.conditions)}",
         "",
         citations_block([a.source_url]),
     ])
@@ -52,7 +58,7 @@ def formulations_table(formulations: list[Formulation]) -> str:
     ]
     for f in formulations:
         lines.append(
-            f"| {f.drug_name} | {f.strength or ''} | {f.form or ''} | "
+            f"| {_cell(f.drug_name)} | {_cell(f.strength)} | {_cell(f.form)} | "
             f"{_fmt_price(f.ceiling_price_inr)} | {_fmt_date(f.price_effective_date)} |"
         )
     lines.append("")
@@ -71,7 +77,7 @@ def price_changes_table(changes: list[PriceChange]) -> str:
         lines.append(
             f"| `{c.formulation_id}` | {_fmt_price(c.old_price_inr)} | "
             f"{_fmt_price(c.new_price_inr)} | {_fmt_date(c.effective_date)} | "
-            f"{c.reason or ''} |"
+            f"{_cell(c.reason)} |"
         )
     lines.append("")
     lines.append(citations_block([c.source_url for c in changes]))

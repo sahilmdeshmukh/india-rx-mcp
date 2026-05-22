@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS price_changes (
     reason TEXT,
     source_url TEXT NOT NULL,
     scraped_at TEXT NOT NULL,
+    CONSTRAINT uq_price_change UNIQUE(formulation_id, effective_date),
     FOREIGN KEY (formulation_id) REFERENCES formulations(formulation_id)
 );
 CREATE INDEX IF NOT EXISTS idx_price_changes_date ON price_changes(effective_date);
@@ -72,6 +73,7 @@ def init_db(path: Path | None = None) -> sqlite3.Connection:
         path = get_db_path()
     conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL")   # allow concurrent readers during refresh writes
     # executescript() issues an implicit COMMIT; DDL is already durable.
     # NOTE: check_same_thread=True by default. Background threads (e.g. refresh worker)
     # must open their own connection.

@@ -70,7 +70,7 @@ def upsert_price_changes(conn: sqlite3.Connection, changes: Iterable[PriceChange
     n = 0
     for c in changes:
         conn.execute(
-            """INSERT INTO price_changes(
+            """INSERT OR IGNORE INTO price_changes(
                 formulation_id, old_price_inr, new_price_inr,
                 effective_date, reason, source_url, scraped_at
             ) VALUES (?,?,?,?,?,?,?)""",
@@ -83,7 +83,7 @@ def upsert_price_changes(conn: sqlite3.Connection, changes: Iterable[PriceChange
     return n
 
 
-def _row_to_approval(row: sqlite3.Row) -> Approval:
+def row_to_approval(row: sqlite3.Row) -> Approval:
     return Approval(
         approval_id=row["approval_id"],
         drug_name=row["drug_name"],
@@ -153,7 +153,7 @@ def find_approvals(
     # SQLite 3.30+ supports NULLS LAST; Python 3.14 ships 3.45+, so safe.
     sql = f"SELECT * FROM approvals {where} ORDER BY approval_date DESC NULLS LAST LIMIT ?"
     params.append(limit)
-    return [_row_to_approval(r) for r in conn.execute(sql, params)]
+    return [row_to_approval(r) for r in conn.execute(sql, params)]
 
 
 def find_formulations(

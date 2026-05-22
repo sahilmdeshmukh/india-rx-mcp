@@ -16,7 +16,12 @@ def _get_conn() -> sqlite3.Connection:
 
 
 def _parse_iso(s: str | None) -> date | None:
-    return date.fromisoformat(s) if s else None
+    if not s:
+        return None
+    try:
+        return date.fromisoformat(s)
+    except ValueError:
+        return None
 
 
 def get_nppa_ceiling_price(

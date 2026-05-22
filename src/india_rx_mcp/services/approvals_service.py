@@ -2,7 +2,7 @@ import sqlite3
 from datetime import date, timedelta
 
 from india_rx_mcp.cache.models import Approval
-from india_rx_mcp.cache.repo import _row_to_approval, find_approvals
+from india_rx_mcp.cache.repo import find_approvals, row_to_approval
 
 THERAPEUTIC_AREA_KEYWORDS: dict[str, list[str]] = {
     "oncology": ["cancer", "tumor", "tumour", "carcinoma", "oncology", "leukemia",
@@ -59,7 +59,7 @@ class ApprovalsService:
             row = self.conn.execute(
                 "SELECT * FROM approvals WHERE approval_id = ?", (approval_id,)
             ).fetchone()
-            return _row_to_approval(row) if row else None
+            return row_to_approval(row) if row else None
         if drug_name:
             results = find_approvals(self.conn, drug_query=drug_name, limit=1)
             return results[0] if results else None
