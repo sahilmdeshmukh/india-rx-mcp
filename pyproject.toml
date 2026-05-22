@@ -1,6 +1,6 @@
 [project]
 name = "india-rx-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for Indian pharma regulatory data (CDSCO approvals + NPPA pricing)"
 readme = "README.md"
 requires-python = ">=3.11"

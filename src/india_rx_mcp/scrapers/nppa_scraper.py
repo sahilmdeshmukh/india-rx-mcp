@@ -218,8 +218,31 @@ def parse_compendium_pdf(path: Path, source_url: str) -> list[Formulation]:
     return formulations
 
 
+def _get_bundled_pdf() -> Path | None:
+    """Return the path to the bundled 2022 compendium PDF shipped with the package."""
+    try:
+        from importlib.resources import files
+        ref = files("india_rx_mcp.data").joinpath("nppa_compendium_2022.pdf")
+        p = Path(str(ref))
+        return p if p.exists() else None
+    except Exception:
+        return None
+
+
 def scrape_compendium(url: str, dest: Path) -> list[Formulation]:
-    """Download a compendium PDF to `dest` and parse it. Returns list of Formulations."""
+    """Parse the NPPA compendium PDF.
+
+    Uses the bundled 2022 compendium shipped with the package to avoid SSL
+    certificate issues with nppa.gov.in on some platforms. Falls back to a
+    live download only if the bundled copy is unavailable.
+    """
+    bundled = _get_bundled_pdf()
+    if bundled is not None:
+        log.info("scrape_compendium: using bundled NPPA compendium (no download needed)")
+        return parse_compendium_pdf(bundled, source_url=url)
+
+    # Fallback: live download (may fail on platforms with SSL cert chain issues)
+    log.warning("Bundled NPPA PDF not found — attempting live download from %s", url)
     dest.parent.mkdir(parents=True, exist_ok=True)
     with httpx.Client(headers=HEADERS, timeout=120.0, follow_redirects=True) as client:
         response = client.get(url)
