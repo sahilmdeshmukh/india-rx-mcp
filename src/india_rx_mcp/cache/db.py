@@ -1,5 +1,7 @@
+import os
 import sqlite3
 from pathlib import Path
+
 from platformdirs import user_cache_dir
 
 SCHEMA = """
@@ -59,12 +61,8 @@ CREATE TABLE IF NOT EXISTS scraper_errors (
 
 
 def get_db_path() -> Path:
-    import os
     xdg = os.environ.get("XDG_CACHE_HOME")
-    if xdg:
-        cache_dir = Path(xdg) / "india-rx-mcp"
-    else:
-        cache_dir = Path(user_cache_dir("india-rx-mcp"))
+    cache_dir = Path(xdg) / "india-rx-mcp" if xdg else Path(user_cache_dir("india-rx-mcp"))
     cache_dir.mkdir(parents=True, exist_ok=True)
     return cache_dir / "cache.db"
 
@@ -74,8 +72,10 @@ def init_db(path: Path | None = None) -> sqlite3.Connection:
         path = get_db_path()
     conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
+    # executescript() issues an implicit COMMIT; DDL is already durable.
+    # NOTE: check_same_thread=True by default. Background threads (e.g. refresh worker)
+    # must open their own connection.
     conn.executescript(SCHEMA)
-    conn.commit()
     return conn
 
 
