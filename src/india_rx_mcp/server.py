@@ -1,5 +1,6 @@
 from mcp.server.fastmcp import FastMCP
 
+from india_rx_mcp.prompts import workflows
 from india_rx_mcp.resources import catalogs
 from india_rx_mcp.tools import cdsco_tools, nppa_tools
 
@@ -19,6 +20,11 @@ mcp.tool()(nppa_tools.list_nppa_price_changes)
 # Resources
 mcp.resource("cdsco://catalog/approved-drugs")(catalogs.approved_drugs_catalog)
 mcp.resource("nppa://catalog/scheduled-formulations")(catalogs.scheduled_formulations_catalog)
+
+# Prompts
+mcp.prompt()(workflows.competitor_briefing)
+mcp.prompt()(workflows.therapeutic_area_landscape)
+mcp.prompt()(workflows.monthly_market_update)
 
 
 def main() -> None:
