@@ -28,6 +28,8 @@ mcp.prompt()(workflows.monthly_market_update)
 
 
 def main() -> None:
+    from india_rx_mcp.refresh import refresh_if_stale_in_background
+    refresh_if_stale_in_background()
     mcp.run(transport="stdio")
 
 
