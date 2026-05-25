@@ -76,10 +76,7 @@ This is v0.1 — first public release. Known gaps you should know about before r
    - `search_cdsco_approvals(sponsor=...)` filter won't match CDSCO data
    - `Approval.sponsor` is `None` for all CDSCO records
    - Planned for v1.1 (likely by parsing detailed approval letters or alternative CDSCO endpoints)
-2. **NPPA data is from the 2022 Compendium of Prices** (last published comprehensive compilation). Quarterly WPI revisions since then aren't in v1. Adding WPI-revision notification parsing is planned for v1.2.
-3. **`list_nppa_price_changes(...)` returns empty in v1.** The compendium is a snapshot. Price-change tracking requires either comparing successive compendiums or parsing WPI revision notifications — both planned for v1.2.
-4. **`therapeutic_area` on NPPA is best-effort substring match on drug name** (NPPA formulations don't carry indication metadata). For richer TA filtering use `search_cdsco_approvals(therapeutic_area=...)`, which has a built-in keyword-expansion map.
-5. **Patents, CTRI clinical trials, FDA cross-reference**: out of scope for v1.
+2. **Patents, CTRI clinical trials, FDA cross-reference**: out of scope for v1.
 
 ## Roadmap
 
