@@ -1,5 +1,7 @@
 # india-rx-mcp
 
+![Demo](docs/demo.gif)
+
 An MCP (Model Context Protocol) server for **Indian pharma regulatory data** — CDSCO drug approvals and NPPA ceiling-price data — for any MCP-compatible LLM client (Claude Desktop, Cursor, Cline, Continue).
 
 Built by a pharma market analyst, for pharma market analysts.
